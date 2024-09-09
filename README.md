@@ -42,18 +42,15 @@ curl -X POST http://localhost:5000/forward -H "Content-Type: application/json" -
 
 Replace `{"key": "value"}` with the actual JSON content you want to send.
 
-## Running the Webserver using Docker
+## Deploying and Running the App as an Azure Function App
 
-To run the webserver using Docker, follow these steps:
+To deploy and run the app as an Azure Function App, follow these steps:
 
-1. Build the Docker image:
-   ```sh
-   docker build -t spotbot .
-   ```
+1. Create an Azure Function App in the Azure portal.
 
-2. Run the Docker container:
-   ```sh
-   docker run -p 5000:5000 -e TARGET_URL=<target_url> -e DESTINATION_URL=<destination_url> spotbot
-   ```
+2. Set up the required environment variables in the Azure Function App configuration:
+   - `TARGET_URL`: The target URL to which the content will be forwarded.
 
-Replace `<target_url>` with the actual target URL and `<destination_url>` with the desired port number for the Flask app. If `DESTINATION_URL` is not set, the default port will be 5000.
+3. Deploy the app to the Azure Function App using the provided GitHub Actions workflow.
+
+4. Once deployed, you can send POST requests to the Azure Function App endpoint to forward the content to the target URL.

@@ -1,17 +1,11 @@
-from flask import Flask, request
+import azure.functions as func
 import requests
 import os
 
-app = Flask(__name__)
-
-@app.route('/forward', methods=['POST'])
-def forward():
-    content = request.get_json()
-    target_url = os.getenv('TARGET_URL')  # Replace with the actual target URL
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    content = req.get_json()
+    target_url = os.getenv('TARGET_URL')
     if not target_url:
-        return "Error: TARGET_URL environment variable is not set.", 500
+        return func.HttpResponse("Error: TARGET_URL environment variable is not set.", status_code=500)
     response = requests.post(target_url, json=content)
-    return response.text, response.status_code
-
-if __name__ == '__main__':
-    app.run(port=os.getenv('DESTINATION_URL', 5000))
+    return func.HttpResponse(response.text, status_code=response.status_code)
