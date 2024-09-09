@@ -13,7 +13,7 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     logging.info(f"Received this: {req}")
 
     try:
-        req_body = req.get_body()
+        req_body = req.get_json()
         logging.info(f"Received JSON: {req_body}")
     except ValueError:
         logging.error('Invalid JSON received')
