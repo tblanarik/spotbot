@@ -9,19 +9,14 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    try:
-        req_body = req.get_json()
-    except ValueError:
-        pass
-    else:
-        fullCallsign = req_body.get('fullCallsign', 'Unknown')
-        source = req_body.get('source', 'Unknown')
-        frequency = req_body.get('frequency', 'Unknown')
-        mode = req_body.get('mode', 'Unknown')
-        summitRef = req_body.get('summitRef', '')
-        wwffRef = req_body.get('wwffRef', '')
+    req_body = req.get_json()
+    fullCallsign = req_body.get('fullCallsign', 'Unknown')
+    source = req_body.get('source', 'Unknown')
+    frequency = req_body.get('frequency', 'Unknown')
+    mode = req_body.get('mode', 'Unknown')
+    summitRef = req_body.get('summitRef', '')
+    wwffRef = req_body.get('wwffRef', '')
 
-    
     content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
 
     target_url = os.getenv('TARGET_URL')
