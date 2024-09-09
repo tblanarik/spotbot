@@ -1,3 +1,4 @@
+'''
 import azure.functions as func
 import requests
 import os
@@ -13,3 +14,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse("Error: TARGET_URL environment variable is not set.", status_code=500)
     response = requests.post(target_url, json=content)
     return func.HttpResponse(response.text, status_code=response.status_code)
+'''
+
+import azure.functions as func
+import logging
+
+app = func.FunctionApp()
+
+@app.function_name(name="HttpTrigger1")
+@app.route(route="hello", auth_level=func.AuthLevel.ANONYMOUS)
+def test_function(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+    return func.HttpResponse(
+        "This HTTP triggered function executed successfully.",
+        status_code=200
+        )
