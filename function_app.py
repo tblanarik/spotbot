@@ -14,12 +14,12 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError:
         pass
     else:
-        fullCallsign = req_body.get('fullCallsign')
-        source = req_body.get('source')
-        frequency = req_body.get('frequency')
-        mode = req_body.get('mode')
-        summitRef = req_body.get('summitRef')
-        wwffRef = req_body.get('wwffRef')
+        fullCallsign = req_body.get('fullCallsign', 'Unknown')
+        source = req_body.get('source', 'Unknown')
+        frequency = req_body.get('frequency', 'Unknown')
+        mode = req_body.get('mode', 'Unknown')
+        summitRef = req_body.get('summitRef', '')
+        wwffRef = req_body.get('wwffRef', '')
 
     
     content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
