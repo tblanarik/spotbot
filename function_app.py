@@ -14,9 +14,15 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError:
         pass
     else:
-        name = req_body.get('name')
+        fullCallsign = req_body.get('fullCallsign')
+        source = req_body.get('source')
+        frequency = req_body.get('frequency')
+        mode = req_body.get('mode')
+        summitRef = req_body.get('summitRef')
+        wwffRef = req_body.get('wwffRef')
 
-    content = {"content": "TESTING 123"}
+    
+    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
 
     target_url = os.getenv('TARGET_URL')
     response = requests.post(target_url, json=content)
