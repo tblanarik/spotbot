@@ -27,10 +27,10 @@ Spotbot is a simple webserver that listens for HTTP POST requests and forwards t
 
 To run the webserver, execute the following command:
 ```sh
-python spotbot.py
+TARGET_URL=<target_url> DESTINATION_URL=<destination_url> python spotbot.py
 ```
 
-The webserver will start and listen on port 5000.
+Replace `<target_url>` with the actual target URL and `<destination_url>` with the desired port number for the Flask app. If `DESTINATION_URL` is not set, the default port will be 5000.
 
 ## Sending a POST Request to the `/forward` Endpoint
 
@@ -53,7 +53,7 @@ To run the webserver using Docker, follow these steps:
 
 2. Run the Docker container:
    ```sh
-   docker run -p 5000:5000 spotbot
+   docker run -p 5000:5000 -e TARGET_URL=<target_url> -e DESTINATION_URL=<destination_url> spotbot
    ```
 
-The webserver will start and listen on port 5000 inside the Docker container.
+Replace `<target_url>` with the actual target URL and `<destination_url>` with the desired port number for the Flask app. If `DESTINATION_URL` is not set, the default port will be 5000.
