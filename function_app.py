@@ -9,7 +9,15 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    req_body = req.get_json()
+    req_body = {}
+
+    try:
+        req_body = req.get_json()
+        logging.info(f"Received JSON: {req_body}")
+    except ValueError:
+        logging.error('Invalid JSON received')
+        return func.HttpResponse("Invalid JSON", status_code=400)
+
     fullCallsign = req_body.get('fullCallsign', 'Unknown')
     source = req_body.get('source', 'Unknown')
     frequency = req_body.get('frequency', 'Unknown')
