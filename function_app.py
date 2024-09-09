@@ -10,9 +10,10 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     req_body = {}
+    logging.info(f"Received this: {req}")
 
     try:
-        req_body = req.get_json()
+        req_body = req.get_body()
         logging.info(f"Received JSON: {req_body}")
     except ValueError:
         logging.error('Invalid JSON received')
