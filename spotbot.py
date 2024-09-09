@@ -2,6 +2,10 @@ import azure.functions as func
 import requests
 import os
 
+app = func.FunctionApp()
+
+@app.function_name(name="SpotBotTrigger")
+@app.route(route="hello", auth_level=func.AuthLevel.ANONYMOUS, methods=["POST"])
 def main(req: func.HttpRequest) -> func.HttpResponse:
     content = req.get_json()
     target_url = os.getenv('TARGET_URL')
