@@ -10,7 +10,6 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     req_body = {}
-    logging.info(f"Received this: {req}")
 
     try:
         req_body = req.get_json()
@@ -19,6 +18,10 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
         logging.error('Invalid JSON received')
         return func.HttpResponse("Invalid JSON", status_code=400)
 
+    content = create_content
+    return call_target(content)
+
+def create_content(req_body):
     fullCallsign = req_body.get('fullCallsign', 'Unknown')
     source = req_body.get('source', 'Unknown')
     frequency = req_body.get('frequency', 'Unknown')
@@ -27,7 +30,9 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     wwffRef = req_body.get('wwffRef', '')
 
     content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
+    return content
 
+def call_target(content):
     target_url = os.getenv('TARGET_URL')
     response = requests.post(target_url, json=content)
     return func.HttpResponse(response.text, status_code=response.status_code)
