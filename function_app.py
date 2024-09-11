@@ -18,7 +18,7 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
         logging.error('Invalid JSON received')
         return func.HttpResponse("Invalid JSON", status_code=400)
 
-    content = create_content
+    content = create_content(req_body)
     return call_target(content)
 
 def create_content(req_body):
