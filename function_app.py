@@ -43,8 +43,8 @@ def create_spot_deeplink(source, fullCallsign, wwffRef):
 
     match source:
         case "sotawatch":
-            return "[See their latest spot](https://sotl.as/activators/{fullCallsign})"
+            return f"[See their latest spot](https://sotl.as/activators/{fullCallsign})"
         case "pota":
-            return "[See their latest spot](https://api.pota.app/spot/comments/{fullCallsign}/{wwffRef})"
+            return f"[See their latest spot](https://api.pota.app/spot/comments/{fullCallsign}/{wwffRef})"
         case _:
             return ""
