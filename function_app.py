@@ -29,7 +29,7 @@ def create_content(req_body):
     summitRef = req_body.get('summitRef', '')
     wwffRef = req_body.get('wwffRef', '')
 
-    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
+    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}", "flags": 4}
     return content
 
 def call_target(content):
