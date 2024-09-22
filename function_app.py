@@ -23,13 +23,14 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
 
 def create_content(req_body):
     fullCallsign = req_body.get('fullCallsign', 'Unknown')
+    callsign = req_body.get('callsign', 'Unknown')
     source = req_body.get('source', 'Unknown')
     frequency = req_body.get('frequency', 'Unknown')
     mode = req_body.get('mode', 'Unknown')
     summitRef = req_body.get('summitRef', '')
     wwffRef = req_body.get('wwffRef', '')
 
-    spot_deeplink = create_spot_deeplink(source, fullCallsign, wwffRef)
+    spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
 
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
     content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
@@ -40,11 +41,11 @@ def call_target(content):
     response = requests.post(target_url, json=content)
     return func.HttpResponse(response.text, status_code=response.status_code)
 
-def create_spot_deeplink(source, fullCallsign, wwffRef):
+def create_spot_deeplink(source, callsign, wwffRef):
     match source:
         case "sotawatch":
-            return f"[See their latest spot](https://sotl.as/activators/{fullCallsign})"
+            return f"[See their latest spot](https://sotl.as/activators/{callsign})"
         case "pota":
-            return f"[See their latest spot](https://api.pota.app/spot/comments/{fullCallsign}/{wwffRef})"
+            return f"[See their latest spot](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
         case _:
             return ""
