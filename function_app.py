@@ -29,10 +29,22 @@ def create_content(req_body):
     summitRef = req_body.get('summitRef', '')
     wwffRef = req_body.get('wwffRef', '')
 
-    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"}
+    spot_deeplink = create_spot_deeplink(source, fullCallsign, wwffRef)
+
+    # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
+    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
     return content
 
 def call_target(content):
     target_url = os.getenv('TARGET_URL')
     response = requests.post(target_url, json=content)
     return func.HttpResponse(response.text, status_code=response.status_code)
+
+def create_spot_deeplink(source, fullCallsign, wwffRef):
+    match source:
+        case "sotawatch":
+            return f"[See their latest spot](https://sotl.as/activators/{fullCallsign})"
+        case "pota":
+            return f"[See their latest spot](https://api.pota.app/spot/comments/{fullCallsign}/{wwffRef})"
+        case _:
+            return ""
