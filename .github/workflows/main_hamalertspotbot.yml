@@ -68,6 +68,6 @@ jobs:
           app-name: 'hamalertspotbot'
           slot-name: 'staging'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2A375008FC1743E4AE2D6A345036BDC4 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_STAGING }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
