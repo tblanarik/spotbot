@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'staging'
       url: ${{ steps.deploy-to-function.outputs.webapp-url }}
 
     steps:
@@ -69,7 +69,7 @@ jobs:
         id: deploy-to-function
         with:
           app-name: 'hamalertspotbot'
-          slot-name: 'Production'
+          slot-name: 'staging'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2A375008FC1743E4AE2D6A345036BDC4 }}
           scm-do-build-during-deployment: true
