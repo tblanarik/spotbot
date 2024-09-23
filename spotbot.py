@@ -50,8 +50,8 @@ def is_entity_recent(entity):
         return False
     ent_time = entity.metadata['timestamp']
     cur_time = datetime.datetime.now(datetime.timezone.utc)
-    two_hours_in_seconds = 60 * 60 * 2
-    return (cur_time - ent_time).total_seconds() < two_hours_in_seconds
+    lookback_seconds = os.getenv('LOOKBACK_SECONDS', 7200)
+    return (cur_time - ent_time).total_seconds() < lookback_seconds
 
 def call_target(content, messageId=None):
     target_url = os.getenv('TARGET_URL')
