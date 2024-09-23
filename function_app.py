@@ -30,11 +30,10 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     messageId = None
     if is_entity_recent(entity):
         messageId = entity['MessageId']
-    response = call_target(content, messageId)
-    messageId = extract_message_id(response)
+    messageId = call_target(content, messageId)
     upsert_entity(table, callsign, messageId)
 
-    return response
+    return func.HttpResponse(status_code=202)
 
 def create_content(req_body):
     callsign = req_body.get('callsign', 'Unknown')
@@ -57,7 +56,8 @@ def call_target(content, messageId=None):
         target_url = target_url + f"/messages/{messageId}"
         verb = "PATCH"
     response = requests.request(verb, url=target_url, params={"wait": "true"}, json=content)
-    return func.HttpResponse(response.text, status_code=response.status_code)
+    return extract_message_id(response)
+    #return func.HttpResponse(response.text, status_code=response.status_code)
 
 def create_spot_deeplink(source, callsign, wwffRef):
     match source:
@@ -98,5 +98,4 @@ def upsert_entity(table_client, callsign, messageId):
     table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=entity)
 
 def extract_message_id(response):
-    resp = json.loads(response.get_body())
-    return resp['id']
+    return response.json()['id']
