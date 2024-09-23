@@ -1,4 +1,5 @@
 import azure.functions as func
+from azure.data.tables import TableServiceClient
 import logging
 import requests
 import os
@@ -49,3 +50,9 @@ def create_spot_deeplink(source, callsign, wwffRef):
             return f"[See their latest spot](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
         case _:
             return ""
+
+def store_in_azure_table(callsign, refLoc, messageId):
+    connection_string = os.getenv('AzureWebJobsStorage')
+    table_name = os.getenv('TABLE_NAME')
+    table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
+    table_client = table_service_client.create_table(table_name=table_name)
