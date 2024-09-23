@@ -29,7 +29,7 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     entity = query_for_entity(table, callsign)
     messageId = None
     if is_entity_recent(entity):
-        messageId = entity.metadata['MessageId']
+        messageId = entity['MessageId']
     response = call_target(content, messageId)
     messageId = extract_message_id(response)
     upsert_entity(table, callsign, messageId)
