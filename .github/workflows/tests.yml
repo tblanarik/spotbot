@@ -1,9 +1,6 @@
 name: Test SpotBot
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
