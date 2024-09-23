@@ -23,7 +23,6 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     return call_target(content)
 
 def create_content(req_body):
-    fullCallsign = req_body.get('fullCallsign', 'Unknown')
     callsign = req_body.get('callsign', 'Unknown')
     source = req_body.get('source', 'Unknown')
     frequency = req_body.get('frequency', 'Unknown')
@@ -34,7 +33,7 @@ def create_content(req_body):
     spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
 
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
-    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
+    content = {"content": f"{callsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
     return content
 
 def call_target(content):
@@ -51,8 +50,17 @@ def create_spot_deeplink(source, callsign, wwffRef):
         case _:
             return ""
 
-def store_in_azure_table(callsign, refLoc, messageId):
+def store_in_azure_table(callsign, messageId):
     connection_string = os.getenv('AzureWebJobsStorage')
     table_name = os.getenv('TABLE_NAME')
     table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
     table_client = table_service_client.create_table(table_name=table_name)
+    
+    entities = table_client.query_entities(f"PartitionKey eq '{callsign}' and RowKey eq '{callsign}'")
+    
+    
+    my_entity = {
+        u'PartitionKey': callsign,
+        u'RowKey': callsign,
+        u'MessageId': messageId
+    }
