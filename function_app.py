@@ -1,4 +1,8 @@
 import azure.functions as func
+from azure.data.tables import TableServiceClient
+from azure.data.tables import UpdateMode
+import json
+import datetime
 import logging
 import requests
 import os
@@ -19,10 +23,20 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse("Invalid JSON", status_code=400)
 
     content = create_content(req_body)
-    return call_target(content)
+    callsign = req_body.get('callsign')
+
+    table = get_table()
+    entity = query_for_entity(table, callsign)
+    messageId = None
+    if is_entity_recent(entity):
+        messageId = entity.metadata['MessageId']
+    response = call_target(content, messageId)
+    messageId = extract_message_id(response)
+    upsert_entity(table, callsign, messageId)
+
+    return response
 
 def create_content(req_body):
-    fullCallsign = req_body.get('fullCallsign', 'Unknown')
     callsign = req_body.get('callsign', 'Unknown')
     source = req_body.get('source', 'Unknown')
     frequency = req_body.get('frequency', 'Unknown')
@@ -33,12 +47,16 @@ def create_content(req_body):
     spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
 
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
-    content = {"content": f"{fullCallsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
+    content = {"content": f"{callsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
     return content
 
-def call_target(content):
+def call_target(content, messageId=None):
     target_url = os.getenv('TARGET_URL')
-    response = requests.post(target_url, json=content)
+    verb = "POST"
+    if messageId is not None:
+        target_url = target_url + f"/messages/{messageId}"
+        verb = "PATCH"
+    response = requests.request(verb, url=target_url, params={"wait": "true"}, json=content)
     return func.HttpResponse(response.text, status_code=response.status_code)
 
 def create_spot_deeplink(source, callsign, wwffRef):
@@ -49,3 +67,36 @@ def create_spot_deeplink(source, callsign, wwffRef):
             return f"[See their latest spot](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
         case _:
             return ""
+
+def get_table():
+    connection_string = os.getenv('AzureWebJobsStorage')
+    table_name = os.getenv('TABLE_NAME')
+    table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
+    table_client = table_service_client.get_table_client(table_name=table_name)
+    return table_client
+
+def query_for_entity(table_client, callsign):
+    entities = [ent for ent in table_client.query_entities(f"PartitionKey eq '{callsign}' and RowKey eq '{callsign}'")]
+    if len(entities) > 0:
+        logging.info(f"Entity already exists for {callsign}")
+    return entities[0] if len(entities) > 0 else None
+
+def is_entity_recent(entity):
+    if entity is None:
+        return False
+    ent_time = entity.metadata['timestamp']
+    cur_time = datetime.datetime.now(datetime.timezone.utc)
+    two_hours_in_seconds = 60 * 60 * 2
+    return (cur_time - ent_time).total_seconds() < two_hours_in_seconds
+
+def upsert_entity(table_client, callsign, messageId):
+    entity = {
+        u'PartitionKey': callsign,
+        u'RowKey': callsign,
+        u'MessageId': messageId
+    }
+    table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=entity)
+
+def extract_message_id(response):
+    resp = json.loads(response.get_body())
+    return resp['id']
