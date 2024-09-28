@@ -11,7 +11,6 @@ def run(req):
     req_body = req.get_json()
     logging.info(f"Received JSON: {req_body}")
 
-    content = create_content(req_body)
     callsign = req_body.get('callsign')
 
     table = tables.get_table()
@@ -19,6 +18,7 @@ def run(req):
     messageId = None
     if is_entity_recent(entity):
         messageId = entity['MessageId']
+    content = create_content(req_body)
     messageId = call_target(content, messageId)
     tables.upsert_entity(table, callsign, messageId)
     
@@ -33,15 +33,15 @@ def create_content(req_body):
     spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
 
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
-    content = {"content": f"{callsign} | {source} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {spot_deeplink}", "flags": 4}
+    content = {"content": f"{callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}", "flags": 4}
     return content
 
 def create_spot_deeplink(source, callsign, wwffRef):
     match source:
         case "sotawatch":
-            return f"[See their latest spot](https://sotl.as/activators/{callsign})"
+            return f"[{source}](https://sotl.as/activators/{callsign})"
         case "pota":
-            return f"[See their latest spot](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
+            return f"[{source}](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
         case _:
             return ""
         
