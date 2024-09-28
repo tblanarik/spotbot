@@ -18,3 +18,10 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="manual_cleanup", methods=[func.HttpMethod.POST])
 def manual_cleanup(req: func.HttpRequest) -> func.HttpResponse:
     cleanup.cleanup()
+    return func.HttpResponse(status_code=202)
+
+@app.schedule(schedule="0 0 * * *",
+              arg_name="timer",
+              run_on_startup=False)
+def timer_cleanup(timer: func.TimerRequest) -> None:
+    cleanup.cleanup()
