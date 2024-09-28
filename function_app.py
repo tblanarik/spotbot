@@ -15,6 +15,6 @@ def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     else:
         return func.HttpResponse(status_code=202)
 
-@app.route(route="manualcleanup", methods=[func.HttpMethod.POST])
+@app.route(route="manual_cleanup", methods=[func.HttpMethod.POST])
 def manual_cleanup(req: func.HttpRequest) -> func.HttpResponse:
     cleanup.cleanup()
