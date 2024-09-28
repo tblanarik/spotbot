@@ -11,7 +11,6 @@ def run(req):
     req_body = req.get_json()
     logging.info(f"Received JSON: {req_body}")
 
-    content = create_content(req_body)
     callsign = req_body.get('callsign')
 
     table = tables.get_table()
@@ -19,6 +18,7 @@ def run(req):
     messageId = None
     if is_entity_recent(entity):
         messageId = entity['MessageId']
+    content = create_content(req_body)
     messageId = call_target(content, messageId)
     tables.upsert_entity(table, callsign, messageId)
     
