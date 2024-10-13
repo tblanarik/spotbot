@@ -39,9 +39,9 @@ def create_content(req_body, dd):
     wwffRef = req_body.get('wwffRef', '')
 
     spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
-
+    formatted_time = dd.strftime("%H:%M")
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
-    content = {"content": f"{callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {dd.strftime("%H:%M")}", "flags": 4}
+    content = {"content": f"{callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {formatted_time}", "flags": 4}
     return content
 
 def create_spot_deeplink(source, callsign, wwffRef):
