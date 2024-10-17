@@ -8,7 +8,7 @@ import tables
 
 def run(req):
     logging.info('Python HTTP trigger function processed a request.')
-    dd = datetime.now(timezone('US/Pacific'))
+    dd = datetime.datetime.now(timezone('US/Pacific'))
 
     req_body = req.get_json()
     logging.info(f"Received JSON: {req_body}")
