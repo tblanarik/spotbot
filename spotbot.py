@@ -15,7 +15,7 @@ def run(req):
 
     callsign = req_body.get('callsign')
 
-    content = create_content(req_body)
+    content = create_content(req_body, dd)
 
     table = tables.get_table()
     entity = tables.query_for_entity(table, callsign)
