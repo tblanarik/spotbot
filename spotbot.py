@@ -75,7 +75,7 @@ def get_previous_message(messageId):
     verb = "GET"
     target_url = target_url + f"/messages/{messageId}"
     response = requests.request(verb, url=target_url)
-    response.json()['content']
+    return response.json()['content']
 
 def extract_message_id(response):
     return response.json()['id']
