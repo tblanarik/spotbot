@@ -13,8 +13,11 @@ class SpotBot:
     def process(self):
         logging.info('Processing HamAlert message')
         previous_message, message_id = self.get_last_message()
-        previous_message = self.strikethrough_mesage(previous_message)
-        content = self.combine_messages(previous_message, self.ham)
+        if previous_message:
+            previous_message = self.strikethrough_mesage(previous_message)
+            content = self.combine_messages(previous_message, self.ham)
+        else:
+            content = str(self.ham)
         message_id = self.discord_http.post_message(content, message_id)
         self.table.upsert_entity(self.ham.callsign, message_id)
 
