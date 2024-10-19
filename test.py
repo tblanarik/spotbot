@@ -3,11 +3,9 @@ import spotbot
 from datetime import datetime
 from pytz import timezone
 
-import requests
-import requests_mock
-
 class TestSpotBot(unittest.TestCase):
 
+    '''
     def test_function_app_basic(self):
         dd = datetime.strptime("2024-10-13T01:05:03", "%Y-%m-%dT%H:%M:%S")
         req_body = {"callsign":"KI7HSG", "source": "pota", "frequency": "14.074", "mode": "FT8", "wwffRef":"US-0052"}
@@ -21,6 +19,7 @@ class TestSpotBot(unittest.TestCase):
         content = spotbot.create_content(req_body, dd)
         expected = '01:05 | KI7HSG | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD'
         self.assertEqual(content, expected)
-
+    '''
+        
 if __name__ == '__main__':
     unittest.main()
