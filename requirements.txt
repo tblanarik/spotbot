@@ -1,3 +1,4 @@
 azure-functions
 azure-data-tables
 requests
+pytz
