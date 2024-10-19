@@ -27,7 +27,7 @@ class SpotBot:
         return f"{m1}\n{m2}"
 
     def get_last_message(self):
-        last_message_entity = self.table.query_for_entity(self.callsign)
+        last_message_entity = self.table.query_for_entity(self.ham.callsign)
         if self.is_entity_recent(last_message_entity):
             messageId = last_message_entity['MessageId']
             existing_message = self.discord_http.get_message_from_id(messageId)
