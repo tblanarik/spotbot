@@ -6,12 +6,13 @@ class DiscordHttp:
         self.session = requests.Session()
 
     def post_message(self, content, messageId=None):
+        content_payload = {"content": content, "flags": 4}
         target_url = os.getenv('TARGET_URL')
         verb = "POST"
         if messageId is not None:
             target_url = target_url + f"/messages/{messageId}"
             verb = "PATCH"
-        response = self.session.request(verb, url=target_url, params={"wait": "true"}, json=content)
+        response = self.session.request(verb, url=target_url, params={"wait": "true"}, json=content_payload)
         return response.json()['id']
 
     def get_message_from_id(self, messageId):
