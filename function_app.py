@@ -1,6 +1,8 @@
 import logging
 import azure.functions as func
 import spotbot as sb
+import tables
+import discord_http
 import cleanup
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
@@ -8,7 +10,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 @app.route(route="spotbot", methods=[func.HttpMethod.POST])
 def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        sb.SpotBot(req).process()
+        sb.SpotBot(req, tables.HamAlertTable(), discord_http.DiscordHttp()).process()
     except Exception as _excpt:
         logging.error(f"Exception occurred: {_excpt}")
         return func.HttpResponse(body=f"Exception occurred: {_excpt}", status_code=500)
