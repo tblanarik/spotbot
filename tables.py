@@ -10,6 +10,12 @@ class HamAlertTable:
         table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
         self.table_client = table_service_client.get_table_client(table_name=table_name)
 
+    def initialize_table(self):
+        connection_string = os.getenv('AzureWebJobsStorage')
+        table_name = os.getenv('TABLE_NAME')
+        table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
+        self.table_client = table_service_client.get_table_client(table_name=table_name)
+
     def query_for_entity(self, callsign):
         entities = [ent for ent in self.table_client.query_entities(f"PartitionKey eq '{callsign}' and RowKey eq '{callsign}'")]
         if len(entities) > 0:

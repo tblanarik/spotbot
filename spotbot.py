@@ -2,15 +2,13 @@ import logging
 import os
 import datetime
 from hamalertmessage import HamAlertMessage
-from tables import HamAlertTable
-from discord_http import DiscordHttp
 
 class SpotBot:
-    def __init__(self, http_req):
+    def __init__(self, http_req, table, discord_http):
         self.http_req = http_req
         self.ham = HamAlertMessage(http_req.get_json())
-        self.table = HamAlertTable()
-        self.discord_http = DiscordHttp()
+        self.table = table
+        self.discord_http = discord_http
 
     def process(self):
         logging.info('Processing HamAlert message')
