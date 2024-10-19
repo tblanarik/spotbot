@@ -21,4 +21,4 @@ class HamAlertMessage:
                 return ""
 
     def __str__(self):
-        return f"{self.received_time_pt.strftime("%H:%M")} | {self.callsign} | {self.spot_deeplink} | freq: {self.frequency} | mode: {self.mode} | loc: {self.summitRef}{self.wwffRef}"
+        return f'{self.received_time_pt.strftime("%H:%M")} | {self.callsign} | {self.spot_deeplink} | freq: {self.frequency} | mode: {self.mode} | loc: {self.summitRef}{self.wwffRef}'
