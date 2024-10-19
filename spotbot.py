@@ -1,8 +1,6 @@
 import logging
 import os
 import datetime
-from pytz import timezone
-import tables
 from hamalertmessage import HamAlertMessage
 from tables import HamAlertTable
 from discord_http import DiscordHttp
@@ -16,7 +14,6 @@ class SpotBot:
 
     def process(self):
         logging.info('Processing HamAlert message')
-
         previous_message, message_id = self.get_last_message()
         previous_message = self.strikethrough_mesage(previous_message)
         content = self.combine_messages(previous_message, self.ham)
@@ -44,31 +41,3 @@ class SpotBot:
         cur_time = datetime.datetime.now(datetime.timezone.utc)
         lookback_seconds = int(os.getenv('LOOKBACK_SECONDS', 7200))
         return (cur_time - ent_time).total_seconds() < lookback_seconds
-
-
-def run(req):
-    logging.info('Python HTTP trigger function processed a request.')
-    dd = datetime.datetime.now(timezone('US/Pacific'))
-
-    req_body = req.get_json()
-    logging.info(f"Received JSON: {req_body}")
-
-    callsign = req_body.get('callsign')
-
-    content = create_content(req_body, dd)
-
-    table = tables.get_table()
-    entity = tables.query_for_entity(table, callsign)
-    messageId = None
-    existingMessage = None
-
-    if is_entity_recent(entity):
-        messageId = entity['MessageId']
-        existingMessage = get_previous_message(messageId).replace("~", "")
-        content = "~~" + existingMessage + "~~\n" + content
-
-    # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
-    content_payload = {"content":content, "flags": 4}
-
-    messageId = post_message(content_payload, messageId)
-    tables.upsert_entity(table, callsign, messageId)

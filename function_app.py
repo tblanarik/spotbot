@@ -8,7 +8,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 @app.route(route="spotbot", methods=[func.HttpMethod.POST])
 def spotbot(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        sb.run(req)
+        sb.SpotBot(req).process()
     except Exception as _excpt:
         logging.error(f"Exception occurred: {_excpt}")
         return func.HttpResponse(body=f"Exception occurred: {_excpt}", status_code=500)
