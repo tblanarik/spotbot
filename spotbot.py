@@ -2,8 +2,47 @@ import logging
 import os
 import datetime
 from pytz import timezone
-import requests
 import tables
+from hamalertmessage import HamAlertMessage
+from tables import HamAlertTable
+from discord_http import DiscordHttp
+
+class SpotBot:
+    def __init__(self, http_req):
+        self.http_req = http_req
+        self.ham = HamAlertMessage(http_req.get_json())
+        self.table = HamAlertTable()
+        self.discord_http = DiscordHttp()
+
+    def process(self):
+        logging.info('Processing HamAlert message')
+
+        previous_message, message_id = self.get_last_message()
+        previous_message = self.strikethrough_mesage(previous_message)
+        content = self.combine_messages(previous_message, self.ham)
+        self.discord_http.post_message(content, message_id)
+
+    def strikethrough_mesage(self, message):
+        return f"~~{message}~~"
+
+    def combine_messages(self, m1, m2):
+        return f"{m1}\n{m2}"
+
+    def get_last_message(self):
+        last_message_entity = self.table.query_for_entity(self.callsign)
+        if self.is_entity_recent(last_message_entity):
+            messageId = last_message_entity['MessageId']
+            existing_message = self.discord_http.get_message_from_id(messageId)
+            return existing_message.replace("~", ""), messageId
+        return "", None
+
+    def is_entity_recent(self, entity):
+        if entity is None:
+            return False
+        ent_time = entity.metadata['timestamp']
+        cur_time = datetime.datetime.now(datetime.timezone.utc)
+        lookback_seconds = int(os.getenv('LOOKBACK_SECONDS', 7200))
+        return (cur_time - ent_time).total_seconds() < lookback_seconds
 
 
 def run(req):
@@ -32,53 +71,3 @@ def run(req):
 
     messageId = post_message(content_payload, messageId)
     tables.upsert_entity(table, callsign, messageId)
-
-def create_content(req_body, dd):
-    callsign = req_body.get('callsign', 'Unknown')
-    source = req_body.get('source', 'Unknown')
-    frequency = req_body.get('frequency', 'Unknown')
-    mode = req_body.get('mode', 'Unknown')
-    summitRef = req_body.get('summitRef', '')
-    wwffRef = req_body.get('wwffRef', '')
-
-    spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
-    formatted_time = dd.strftime("%H:%M")
-
-    content = f"{formatted_time} | {callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"
-    return content
-
-def create_spot_deeplink(source, callsign, wwffRef):
-    match source:
-        case "sotawatch":
-            return f"[{source}](https://sotl.as/activators/{callsign})"
-        case "pota":
-            return f"[{source}](https://api.pota.app/spot/comments/{callsign}/{wwffRef})"
-        case _:
-            return ""
-
-def is_entity_recent(entity):
-    if entity is None:
-        return False
-    ent_time = entity.metadata['timestamp']
-    cur_time = datetime.datetime.now(datetime.timezone.utc)
-    lookback_seconds = int(os.getenv('LOOKBACK_SECONDS', 7200))
-    return (cur_time - ent_time).total_seconds() < lookback_seconds
-
-def post_message(content, messageId=None):
-    target_url = os.getenv('TARGET_URL')
-    verb = "POST"
-    if messageId is not None:
-        target_url = target_url + f"/messages/{messageId}"
-        verb = "PATCH"
-    response = requests.request(verb, url=target_url, params={"wait": "true"}, json=content)
-    return extract_message_id(response)
-
-def get_previous_message(messageId):
-    target_url = os.getenv('TARGET_URL')
-    verb = "GET"
-    target_url = target_url + f"/messages/{messageId}"
-    response = requests.request(verb, url=target_url)
-    return response.json()['content']
-
-def extract_message_id(response):
-    return response.json()['id']

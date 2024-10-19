@@ -3,6 +3,9 @@ import spotbot
 from datetime import datetime
 from pytz import timezone
 
+import requests
+import requests_mock
+
 class TestSpotBot(unittest.TestCase):
 
     def test_function_app_basic(self):
