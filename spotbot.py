@@ -17,7 +17,7 @@ class SpotBot:
         previous_message, message_id = self.get_last_message()
         previous_message = self.strikethrough_mesage(previous_message)
         content = self.combine_messages(previous_message, self.ham)
-        self.discord_http.post_message(content, message_id)
+        message_id = self.discord_http.post_message(content, message_id)
         self.table.upsert_entity(self.ham.callsign, message_id)
 
     def strikethrough_mesage(self, message):
