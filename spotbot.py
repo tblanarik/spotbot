@@ -24,8 +24,8 @@ def run(req):
 
     if is_entity_recent(entity):
         messageId = entity['MessageId']
-        existingMessage = get_previous_message(messageId)
-        content = existingMessage + "\n" + content
+        existingMessage = get_previous_message(messageId).replace("~", "")
+        content = "~~" + existingMessage + "~~\n" + content
 
     # flags = 4 means it will suppress embeds: https://discord.com/developers/docs/resources/message#message-object-message-flags
     content_payload = {"content":content, "flags": 4}
@@ -44,7 +44,7 @@ def create_content(req_body, dd):
     spot_deeplink = create_spot_deeplink(source, callsign, wwffRef)
     formatted_time = dd.strftime("%H:%M")
 
-    content = f"{callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef} | {formatted_time}"
+    content = f"{formatted_time} | {callsign} | {spot_deeplink} | freq: {frequency} | mode: {mode} | loc: {summitRef}{wwffRef}"
     return content
 
 def create_spot_deeplink(source, callsign, wwffRef):
