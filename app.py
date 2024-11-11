@@ -5,7 +5,7 @@ import tables
 import discord_http
 app = Flask(__name__)
 
-@app.route(f'/message')
+@app.route(f'/message', methods=["POST"])
 def run():
     try:
         sb.SpotBot(request, tables.HamAlertTable(), discord_http.DiscordHttp()).process()
