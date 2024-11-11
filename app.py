@@ -15,5 +15,12 @@ def run():
     else:
         return make_response("Accepted", 202)
 
+'''
+Empty endpoint used for keeping the container on and loaded
+'''
+@app.route('/', methods=["GET"])
+def always_on():
+    return make_response("OK", 200)
+
 if __name__ == "__main__":
     app.run()
