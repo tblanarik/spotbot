@@ -4,9 +4,6 @@
 name: Build and deploy container app to Azure Web App - spotbot-docker
 
 on:
-  push:
-    branches:
-      - tblanarik/dockerize
   workflow_dispatch:
 
 jobs:
