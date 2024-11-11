@@ -1,11 +1,13 @@
+import os
 from flask import Flask, request, make_response
 import logging
 import spotbot as sb
 import tables
 import discord_http
 app = Flask(__name__)
+endpoint = os.environ.get('SECRET_ENDPOINT')
 
-@app.route(f'/message', methods=["POST"])
+@app.route(f'/{endpoint}', methods=["POST"])
 def run():
     try:
         sb.SpotBot(request, tables.HamAlertTable(), discord_http.DiscordHttp()).process()
