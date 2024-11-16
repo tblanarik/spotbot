@@ -2,7 +2,7 @@
 
 ## Description
 
-Spotbot is an Azure Function App to convert [HamAlert](https://hamalert.org/) alerts from [POTA](https://pota.app) or [SOTA](https://www.sota.org.uk/) in to a message format that can be forwarded on to a Discord channel webhook.
+Spotbot is an application to convert [HamAlert](https://hamalert.org/) alerts from [POTA](https://pota.app) or [SOTA](https://www.sota.org.uk/) in to a message format that can be forwarded on to a Discord channel webhook.
 
 | HamAlert Configuration |
 | -- |
@@ -19,15 +19,17 @@ You can find a live, working version of this bot in the [Cascadia Radio](https:/
 
 ## Config
 
-The Azure Function App expects three environment variables: 
+The app expects four environment variables: 
 - `TARGET_URL` - the webhook URL from the target Discord channel.
 - `LOOKBACK_SECONDS` - the number of seconds to look backwards for previous messages to update instead of posting a new one
 - `TABLE_NAME` - the name of the table in the Azure Storage Account where the last messageIds will be stored for each callsign
+- `AzureWebJobsStorage` - the full connection string to the Azure Storage Account
+- `SECRET_ENDPOINT` - the name of the endpoint, kept secret to prevent abuse / unwanted messages
 
 ## Deploy Notes
 
 - Some basic tests run in `tests.py` on the creation of a new PR
-- To deploy, manually run `main_hamalertspotbot.yml`
+- To deploy, manually run `deploy-docker.yml`
     - This will deploy to the staging slot for testing. 
     - The staging `TARGET_URL` points to my private Discord server
     - `LOOKBACK_SECONDS` is set to only 300 (instead of 7200) for easier testing.
