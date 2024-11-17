@@ -4,7 +4,10 @@ import logging
 import spotbot as sb
 import tables
 import discord_http
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
 app = Flask(__name__)
+configure_azure_monitor()
 endpoint = os.environ.get('SECRET_ENDPOINT')
 
 @app.route(f'/{endpoint}', methods=["POST"])

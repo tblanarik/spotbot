@@ -3,3 +3,4 @@ requests
 pytz
 flask
 gunicorn
+azure-monitor-opentelemetry
