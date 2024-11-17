@@ -9,9 +9,10 @@ class SpotBot:
         self.ham = HamAlertMessage(http_req.get_json())
         self.table = table
         self.discord_http = discord_http
+        self.logger = logging.getLogger("spotbot")
 
     def process(self):
-        logging.info('Processing HamAlert message')
+        self.logger.info('Processing HamAlert message')
         previous_message, message_id = self.get_last_message()
         if previous_message:
             previous_message = self.strikethrough_mesage(previous_message)
