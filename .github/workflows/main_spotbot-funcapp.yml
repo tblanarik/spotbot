@@ -5,6 +5,9 @@
 name: Build and deploy Python project to Azure Function App - spotbot-funcapp
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
