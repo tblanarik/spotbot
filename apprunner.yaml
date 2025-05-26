@@ -1,6 +1,8 @@
+version: 1.0
+runtime: python3
+build:
+  commands:
+    build:
+      - pip install -r requirements.txt
 run:
-  runtime-version: 3.11
-  pre-run:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-  command: gunicorn -c gunicorn_config.py app:app
+  command: python app.py
