@@ -1,0 +1,7 @@
+run:
+  runtime-version: 3.11
+  pre-run:  
+    - pip3 install pipenv
+    - pipenv install
+    - pip3 install --no-cache-dir -r requirements.txt
+  command: pipenv run gunicorn app:app
