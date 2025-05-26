@@ -3,6 +3,11 @@ runtime: python311
 build:
   commands:
     build:
-      - pip3 install -r requirements.txt
+      - pip3 install pipenv
+      - pipenv install
 run:
-  command: python3 app.py
+  runtime-version: 3.11
+  pre-run:
+    - pip3 install pipenv
+    - pipenv install
+  command: pipenv run gunicorn app:app
