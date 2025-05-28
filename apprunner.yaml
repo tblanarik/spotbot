@@ -14,3 +14,10 @@ run:
   env:
     - name: LOOKBACK_SECONDS
       value: 7200
+    - name: SQLITE_DB_PATH
+      value: ./
+    - name: STORAGE_TYPE
+      value: sqlite
+  secrests:
+    - name: TARGET_URL
+      value-from: arn:aws:secretsmanager:us-east-2:707336479238:secret:TARGET_URL-tR5WKq
