@@ -11,3 +11,6 @@ run:
     - pip3 install pipenv
     - pipenv install
   command: pipenv run gunicorn app:app
+  env:
+    - name: LOOKBACK_SECONDS
+      value: 7200
