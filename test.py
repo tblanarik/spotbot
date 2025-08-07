@@ -11,7 +11,7 @@ class TestSpotBot(unittest.TestCase):
         self.assertEqual(sb.table.saved_callsign, "KI7HSG")
         self.assertEqual(sb.table.saved_messageId, "9876")
         dt = sb.ham.received_time_pt.strftime("%H:%M")
-        self.assertEqual(sb.discord_http.posted_message, f"~~01:05 | KI7HSG | [pota](https://api.pota.app/spot/comments/KI7HSG/US-0052) | freq: 14.074 | mode: FT8 | loc: US-0052~~\n{dt} | KI7HSG | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD")
+        self.assertEqual(sb.discord_http.posted_message, f"~~01:05 | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [pota](https://pota.app/#/park/US-0052) | freq: 14.074 | mode: FT8 | loc: US-0052~~\n{dt} | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD")
 
     def test_spotbot_2(self):
         sb = spotbot.SpotBot(FakeHttpRequest(), table=FakeHamAlertTable(None), discord_http=FakeDiscordHttp())
@@ -19,7 +19,7 @@ class TestSpotBot(unittest.TestCase):
         self.assertEqual(sb.table.saved_callsign, "KI7HSG")
         self.assertEqual(sb.table.saved_messageId, "9876")
         dt = sb.ham.received_time_pt.strftime("%H:%M")
-        self.assertEqual(sb.discord_http.posted_message, f"{dt} | KI7HSG | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD")
+        self.assertEqual(sb.discord_http.posted_message, f"{dt} | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD")
 
 
 '''
@@ -55,7 +55,7 @@ class FakeDiscordHttp:
         self.posted_message = content
         return "9876"
     def get_message_from_id(self, messageId):
-        return '01:05 | KI7HSG | [pota](https://api.pota.app/spot/comments/KI7HSG/US-0052) | freq: 14.074 | mode: FT8 | loc: US-0052'
+        return '01:05 | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [pota](https://pota.app/#/park/US-0052) | freq: 14.074 | mode: FT8 | loc: US-0052'
 
 
 if __name__ == '__main__':
