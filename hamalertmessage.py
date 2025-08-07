@@ -16,9 +16,9 @@ class HamAlertMessage:
             case "sotawatch":
                 return f"[{self.source}](https://sotl.as/activators/{self.callsign})"
             case "pota":
-                return f"[{self.source}](https://api.pota.app/spot/comments/{self.callsign}/{self.wwffRef})"
+                return f"[{self.source}](https://pota.app/#/park/{self.wwffRef})"
             case _:
                 return ""
 
     def __str__(self):
-        return f'{self.received_time_pt.strftime("%H:%M")} | {self.callsign} | {self.spot_deeplink()} | freq: {self.frequency} | mode: {self.mode} | loc: {self.summitRef}{self.wwffRef}'
+        return f'{self.received_time_pt.strftime("%H:%M")} | [{self.callsign}](https://www.qrz.com/db/{self.callsign}) | {self.spot_deeplink()} | freq: {self.frequency} | mode: {self.mode} | loc: {self.summitRef}{self.wwffRef}'
