@@ -5,9 +5,6 @@
 name: Build and deploy Python project to Azure Function App - hamalertspotbot
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 env:
