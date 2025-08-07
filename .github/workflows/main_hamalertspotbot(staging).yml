@@ -71,5 +71,5 @@ jobs:
           app-name: 'hamalertspotbot'
           slot-name: 'staging'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B299E8EC708A46F8AF72AA27F3526F58 }}
+
