@@ -1,6 +1,5 @@
 import logging
 import os
-import sqlite3
 import mysql.connector
 
 class BaseAlertTable:
@@ -47,10 +46,9 @@ class HamAlertMySqlTable(BaseAlertTable):
         if result:
             logging.info(f"Entity already exists for {callsign}")
             return {
-                'PartitionKey': result['callsign'],
-                'RowKey': result['callsign'],
-                'MessageId': result['message_id'],
-                'UtcTimestamp': result['utctimestamp']
+                'callsign': result['callsign'],
+                'message_id': result['message_id'],
+                'utctimetamp': result['utctimestamp']
             }
         return None
 
