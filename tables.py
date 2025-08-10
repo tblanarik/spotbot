@@ -48,7 +48,7 @@ class HamAlertMySqlTable(BaseAlertTable):
             return {
                 'callsign': result['callsign'],
                 'message_id': result['message_id'],
-                'utctimetamp': result['utctimestamp']
+                'utctimestamp': result['utctimestamp']
             }
         return None
 
