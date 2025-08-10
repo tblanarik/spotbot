@@ -1,5 +1,3 @@
-azure-data-tables
 requests
 pytz
 flask
-gunicorn

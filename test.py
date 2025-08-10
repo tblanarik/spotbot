@@ -1,6 +1,6 @@
 import unittest
 import spotbot
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 class TestSpotBot(unittest.TestCase):
@@ -20,6 +20,30 @@ class TestSpotBot(unittest.TestCase):
         self.assertEqual(sb.table.saved_messageId, "9876")
         dt = sb.ham.received_time_pt.strftime("%H:%M")
         self.assertEqual(sb.discord_http.posted_message, f"{dt} | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD")
+
+    def test_spotbot_old_message(self):
+        # Create an entity with a timestamp older than LOOKBACK_SECONDS (2 hours)
+        old_time = datetime.now(timezone('UTC')) - timedelta(seconds=7201)
+        class OldEntity(dict):
+            def __init__(self, messageId, callsign):
+                self['message_id'] = messageId
+                self['callsign'] = callsign
+                self['utctimestamp'] = old_time
+
+        sb = spotbot.SpotBot(
+            FakeHttpRequest(),
+            table=FakeHamAlertTable(OldEntity("1234", "KI7HSG")),
+            discord_http=FakeDiscordHttp()
+        )
+        sb.process()
+        self.assertEqual(sb.table.saved_callsign, "KI7HSG")
+        self.assertEqual(sb.table.saved_messageId, "9876")
+        dt = sb.ham.received_time_pt.strftime("%H:%M")
+        # Should not use the old message, only the new one
+        self.assertEqual(
+            sb.discord_http.posted_message,
+            f"{dt} | [KI7HSG](https://www.qrz.com/db/KI7HSG) | [sotawatch](https://sotl.as/activators/KI7HSG) | freq: 14.074 | mode: FT8 | loc: ABCD"
+        )
 
 
 '''
@@ -43,10 +67,9 @@ class FakeHamAlertTable:
 
 class FakeEntity(dict):
     def __init__(self, messageId, callsign):
-        self['MessageId'] = messageId
-        self['PartitionKey'] = callsign
-        self['RowKey'] = callsign
-        self.metadata = {"timestamp": datetime.now(timezone('US/Pacific'))}
+        self['message_id'] = messageId
+        self['callsign'] = callsign
+        self['utctimestamp'] = datetime.now(timezone('UTC'))
 
 class FakeDiscordHttp:
     def __init__(self):

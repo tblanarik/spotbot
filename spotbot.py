@@ -30,7 +30,7 @@ class SpotBot:
     def get_last_message(self):
         last_message_entity = self.table.query_for_entity(self.ham.callsign)
         if self.is_entity_recent(last_message_entity):
-            messageId = last_message_entity['MessageId']
+            messageId = last_message_entity['message_id']
             existing_message = self.discord_http.get_message_from_id(messageId)
             return existing_message.replace("~", ""), messageId
         return "", None
@@ -38,7 +38,7 @@ class SpotBot:
     def is_entity_recent(self, entity):
         if entity is None:
             return False
-        ent_time = entity.metadata['timestamp']
+        ent_time = entity['utctimestamp'].replace(tzinfo=datetime.timezone.utc)
         cur_time = datetime.datetime.now(datetime.timezone.utc)
         lookback_seconds = int(os.getenv('LOOKBACK_SECONDS', 7200))
         return (cur_time - ent_time).total_seconds() < lookback_seconds
