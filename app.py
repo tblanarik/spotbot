@@ -13,7 +13,7 @@ def run():
         sb.SpotBot(request, tables.create_table_client(), discord_http.DiscordHttp()).process()
     except Exception as _excpt:
         logging.error(f"Exception occurred: {_excpt}")
-        return make_response(f"Exception occurred: {_excpt}", 500)
+        return make_response(f"Error", 500)
     else:
         return make_response("Accepted", 202)
 
