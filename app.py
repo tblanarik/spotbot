@@ -2,15 +2,16 @@ import os
 from flask import Flask, request, make_response
 import logging
 import spotbot as sb
-import tables
-import discord_http
+from tables import HamAlertMySqlTable
+from discord_http import DiscordHttp
+
 app = Flask(__name__)
 endpoint = os.environ.get('SECRET_ENDPOINT')
 
 @app.route(f'/{endpoint}', methods=["POST"])
 def run():
     try:
-        sb.SpotBot(request, tables.create_table_client(), discord_http.DiscordHttp()).process()
+        sb.SpotBot(request, HamAlertMySqlTable(), DiscordHttp()).process()
     except Exception as _excpt:
         logging.error(f"Exception occurred: {_excpt}")
         return make_response(f"Error", 500)
@@ -18,7 +19,7 @@ def run():
         return make_response("Accepted", 202)
 
 '''
-Empty endpoint used for keeping the container on and loaded
+Empty endpoint used for checking that site is up
 '''
 @app.route('/', methods=["GET"])
 def always_on():
