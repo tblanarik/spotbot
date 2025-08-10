@@ -38,7 +38,7 @@ class SpotBot:
     def is_entity_recent(self, entity):
         if entity is None:
             return False
-        ent_time = entity['utctimestamp']
+        ent_time = entity['utctimestamp'].replace(tzinfo=datetime.timezone.utc)
         cur_time = datetime.datetime.now(datetime.timezone.utc)
         lookback_seconds = int(os.getenv('LOOKBACK_SECONDS', 7200))
         return (cur_time - ent_time).total_seconds() < lookback_seconds
