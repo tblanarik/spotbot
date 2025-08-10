@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import logging
 import os
 import mysql.connector
@@ -20,24 +21,6 @@ class HamAlertMySqlTable(BaseAlertTable):
             password=os.getenv('MYSQL_PASSWORD', ''),
             database=os.getenv('MYSQL_DATABASE', 'spotbot')
         )
-        self._create_table()
-
-    def _create_table(self):
-        cursor = self.conn.cursor()
-        # Add the new column if it doesn't exist
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS spots (
-                callsign VARCHAR(255) PRIMARY KEY,
-                message_id TEXT,
-                utctimestamp DATETIME
-            )
-        ''')
-        # Try to add the column if the table already exists and doesn't have it
-        try:
-            cursor.execute('ALTER TABLE spots ADD COLUMN utctimestamp DATETIME')
-        except mysql.connector.errors.DatabaseError:
-            pass  # Ignore if column already exists
-        self.conn.commit()
 
     def query_for_entity(self, callsign):
         cursor = self.conn.cursor(dictionary=True)
@@ -45,15 +28,10 @@ class HamAlertMySqlTable(BaseAlertTable):
         result = cursor.fetchone()
         if result:
             logging.info(f"Entity already exists for {callsign}")
-            return {
-                'callsign': result['callsign'],
-                'message_id': result['message_id'],
-                'utctimestamp': result['utctimestamp']
-            }
+            return result
         return None
 
     def upsert_entity(self, callsign, messageId):
-        from datetime import datetime, timezone
         utc_now = datetime.now(timezone.utc)
         cursor = self.conn.cursor()
         cursor.execute('''

@@ -18,7 +18,7 @@ class HamAlertMessage:
             case "pota":
                 return f"[{self.source}](https://pota.app/#/park/{self.wwffRef})"
             case _:
-                return ""
+                return self.source
 
     def __str__(self):
         return f'{self.received_time_pt.strftime("%H:%M")} | [{self.callsign}](https://www.qrz.com/db/{self.callsign}) | {self.spot_deeplink()} | freq: {self.frequency} | mode: {self.mode} | loc: {self.summitRef}{self.wwffRef}'
