@@ -10,7 +10,7 @@ def main():
         host=os.getenv('MYSQL_HOST', 'localhost'),
         user=os.getenv('MYSQL_USER', 'root'),
         password=os.getenv('MYSQL_PASSWORD', ''),
-        database=os.getenv('MYSQL_DATABASE', 'spotbot')
+        database=os.getenv('MYSQL_DATABASE', '')
     )
     cursor = conn.cursor()
     cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
