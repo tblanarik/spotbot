@@ -18,3 +18,12 @@ load_dotenv(os.path.join(project_home, '.env'))
 # import flask app but need to call it "application" for WSGI to work
 from app import app as application  # noqa
 ```
+
+
+```sql
+CREATE TABLE spots(
+    callsign VARCHAR(255),
+    message_id text,
+    utctimestamp timestamp
+);
+```
