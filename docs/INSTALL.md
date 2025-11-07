@@ -4,7 +4,9 @@ These instructions are for https://www.pythonanywhere.com which is a simple Pyth
 You should be able to adapt this to deploy on your host of choice.
 
 
+## WSGI file
 
+Here's your `/var/www/<YOU>_pythonanywhere_com_wsgi.py` file
 
 ```python
 import sys
