@@ -20,10 +20,33 @@ from app import app as application  # noqa
 ```
 
 
+## DB
+
+may need to step a MySQL password?
+
+Create DB then create table:
+
 ```sql
 CREATE TABLE spots(
     callsign VARCHAR(255),
     message_id text,
     utctimestamp timestamp
 );
+```
+
+
+## .env file
+
+Create a .env file at `/home/<YOU>/<repo>/.env`
+
+Fill it out:
+
+```bash
+export TARGET_URL=https://discord.com/api/webhooks/...
+export LOOKBACK_SECONDS=7200
+export SECRET_ENDPOINT=abcdefg12345
+export MYSQL_HOST=<YOU>.mysql.pythonanywhere-services.com
+export MYSQL_USER=<YOU>
+export MYSQL_PASSWORD=<PASSWORD>
+export MYSQL_DATABASE=<YOU>$<DB NAME>
 ```
