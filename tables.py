@@ -23,9 +23,9 @@ class HamAlertMySqlTable(BaseAlertTable):
         )
 
     def query_for_entity(self, callsign):
-        cursor = self.conn.cursor(dictionary=True)
-        cursor.execute('SELECT callsign, message_id, utctimestamp FROM spots WHERE callsign = %s', (callsign,))
-        result = cursor.fetchone()
+        with self.conn.cursor(dictionary=True) as cursor:
+            cursor.execute('SELECT callsign, message_id, utctimestamp FROM spots WHERE callsign = %s', (callsign,))
+            result = cursor.fetchone()
         if result:
             logging.info(f"Entity already exists for {callsign}")
             return result
@@ -33,10 +33,10 @@ class HamAlertMySqlTable(BaseAlertTable):
 
     def upsert_entity(self, callsign, messageId):
         utc_now = datetime.now(timezone.utc)
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            INSERT INTO spots (callsign, message_id, utctimestamp)
-            VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE message_id = VALUES(message_id), utctimestamp = VALUES(utctimestamp)
-        ''', (callsign, messageId, utc_now))
+        with self.conn.cursor() as cursor:
+            cursor.execute('''
+                INSERT INTO spots (callsign, message_id, utctimestamp)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE message_id = VALUES(message_id), utctimestamp = VALUES(utctimestamp)
+            ''', (callsign, messageId, utc_now))
         self.conn.commit()
