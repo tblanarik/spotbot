@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  spotbot:
+    build: .
+    container_name: spotbot-app
+    ports:
+      - "8000:8000"
+    environment:
+      # Discord Configuration
+      - TARGET_URL=${TARGET_URL}
+
+      # Application Configuration
+      - LOOKBACK_SECONDS=${LOOKBACK_SECONDS:-300}
+      - SECRET_ENDPOINT=${SECRET_ENDPOINT}
+
+      # MySQL Configuration
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER:-spotbot}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-spotbot}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - spotbot-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: spotbot-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-spotbot}
+      - MYSQL_USER=${MYSQL_USER:-spotbot}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - spotbot-network
+
+networks:
+  spotbot-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
