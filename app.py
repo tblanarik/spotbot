@@ -7,9 +7,23 @@ from discord_http import DiscordHttp
 
 app = Flask(__name__)
 endpoint = os.environ.get('SECRET_ENDPOINT')
+allowed_ips_str = os.environ.get('ALLOWED_IPS', '')
+allowed_ips = [ip.strip() for ip in allowed_ips_str.split(',') if ip.strip()] if allowed_ips_str else []
+
+def is_ip_allowed(client_ip):
+    """Check if the client IP is in the allowed list. If no list is configured, allow all."""
+    if not allowed_ips:
+        return True
+    return client_ip in allowed_ips
 
 @app.route(f'/{endpoint}', methods=["POST"])
 def run():
+    client_ip = request.remote_addr
+
+    if not is_ip_allowed(client_ip):
+        logging.warning(f"Access denied for IP: {client_ip}")
+        return make_response("Forbidden", 403)
+
     try:
         sb.SpotBot(request, HamAlertMySqlTable(), DiscordHttp()).process()
     except Exception as _excpt:

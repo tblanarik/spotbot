@@ -19,10 +19,11 @@ You can find a live, working version of this bot in the [Cascadia Radio](https:/
 
 ## Config
 
-The app expects four environment variables: 
+The app expects the following environment variables:
 - `TARGET_URL` - the webhook URL from the target Discord channel.
 - `LOOKBACK_SECONDS` - the number of seconds to look backwards for previous messages to update instead of posting a new one
 - `SECRET_ENDPOINT` - the name of the endpoint, kept secret to prevent abuse / unwanted messages
+- `ALLOWED_IPS` - (optional) comma-separated list of IP addresses allowed to access the secret endpoint. If not set, all IPs are allowed. Example: `192.168.1.1,10.0.0.5`
 - `MYSQL_HOST`
 - `MYSQL_USER`
 - `MYSQL_PASSWORD`
