@@ -18,7 +18,7 @@ def is_ip_allowed(client_ip):
 
 @app.route(f'/{endpoint}', methods=["POST"])
 def run():
-    client_ip = request.remote_addr
+    client_ip = request.headers.get('X-Real-IP', request.remote_addr)
 
     if not is_ip_allowed(client_ip):
         logging.warning(f"Access denied for IP: {client_ip}")
