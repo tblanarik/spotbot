@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir mysql-connector-python gunicorn
 
 # Copy application code
-COPY *.py .
+COPY *.py ./
 
 # Expose port 8000 for the Flask application
 EXPOSE 8000
