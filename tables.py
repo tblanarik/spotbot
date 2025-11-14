@@ -23,7 +23,7 @@ class HamAlertMySqlTable(BaseAlertTable):
         )
 
     def query_for_entity(self, callsign):
-        with self.conn.cursor(dictionary=True) as cursor:
+        with self.conn.cursor(dictionary=True, buffered=True) as cursor:
             cursor.execute('SELECT callsign, message_id, utctimestamp FROM spots WHERE callsign = %s', (callsign,))
             result = cursor.fetchone()
         if result:
@@ -33,7 +33,7 @@ class HamAlertMySqlTable(BaseAlertTable):
 
     def upsert_entity(self, callsign, messageId):
         utc_now = datetime.now(timezone.utc)
-        with self.conn.cursor() as cursor:
+        with self.conn.cursor(buffered=True) as cursor:
             cursor.execute('''
                 INSERT INTO spots (callsign, message_id, utctimestamp)
                 VALUES (%s, %s, %s)
