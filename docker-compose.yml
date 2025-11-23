@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   spotbot:
     build: .
@@ -13,6 +11,10 @@ services:
       # Application Configuration
       - LOOKBACK_SECONDS=${LOOKBACK_SECONDS:-300}
       - SECRET_ENDPOINT=${SECRET_ENDPOINT}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      - HAMALERT_USERNAME=${HAMALERT_USERNAME}
+      - HAMALERT_PASSWORD=${HAMALERT_PASSWORD}
 
       # MySQL Configuration
       - MYSQL_HOST=mysql
