@@ -28,7 +28,14 @@ class HamAlertMySqlTable(BaseAlertTable):
     def query_for_entity(self, callsign):
         conn = self.get_connection()
         with conn.cursor(dictionary=True) as cursor:
-            cursor.execute('SELECT callsign, message_id, utctimestamp FROM spots WHERE callsign = %s', (callsign,))
+            cursor.execute('''
+                           SELECT callsign,
+                                  message_id,
+                                  utctimestamp
+                                  FROM spots
+                                  WHERE callsign = %s
+                                  ORDER BY utctimestamp DESC
+                                  LIMIT 1''', (callsign,))
             result = cursor.fetchone()
         if result:
             logging.info(f"Entity already exists for {callsign}")
